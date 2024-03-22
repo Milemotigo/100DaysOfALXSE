@@ -1,0 +1,12 @@
+{% extends 'core/index.html' %}
+{% block title %} Add Student {% endblock %}
+{% block content %}
+<div class="col-sm-4">
+<h4 class='text-center alert alert-info'>Add/Edit Student</h4>
+<form method='post' action='add'>
+	{% csrf_token %}
+        {{form.as_p}}
+        <input id='add' class="btn btn-primary mb-2" type='submit' value='Add Student'>
+</form>
+</div>
+{% endblock content %}

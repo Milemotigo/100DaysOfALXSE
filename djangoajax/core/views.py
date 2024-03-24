@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from .forms import StudentForms
 from .models import Student
-from django.shortcuts import redirect
-#from django.httpResponse import jsonResponse
+from django.shortcuts import redirect, get_object_or_404
+from django.http import HttpResponseRedirect
 
 def home(request):
     form = StudentForms(request.POST)
     students = Student.objects.all()
 
-    context = {'students':students}
+    context = {'students':students,
+               'form':form
+               }
     return render(request, 'core/add.html', context)
 
 def add_view(request):
@@ -22,29 +24,20 @@ def add_view(request):
     else:
         student = StudentForms()
 
-        return render(request, 'add.html', {'form':form})
-
-def update_view(request):
-
-    sudent = ''
-    if request.method=='POST':
-        id = request.POST.get('id')
-        print(id)
-        student = Student.objects.get(pk=id)
+def update_student(request, id):
+    student = get_object_or_404(Student, pk=id)
+    if request.method == 'POST':
         form = StudentForms(request.POST, instance=student)
-        student.name = request.POST.get('name')
-        student.email = request.POST.get('email')
-        student.course = request.POST.get('course')
         if form.is_valid():
-            student.save()
-        return redirect('home')
+            form.save()
+            return redirect('home')
     else:
-        id = request.POST.get('id')
-        student = Student.objects.get(pk=id)
         form = StudentForms(instance=student)
-
-    context = {'form':form}
-    return render(request, 'core/update.html', context)
+    context = {
+            'student':student,
+            'form':form
+            }
+    return render(request, 'core/update2.html', context)
 
 def delete_view(request):
     if request.method=='POST':
